@@ -20,5 +20,21 @@
     </ul>
 </header>
 
+<div th:fragment="page-header" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a th:href="@{/}" class="navbar-brand">FeedMe</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{/list}">List</a></li>
+                <li><a th:href="@{/search}">Search</a></li>
+                <li><a th:href="@{/add}">Add Choice Columns</a></li>
+                <li class="nav-item"><a class="nav-link" href="/logout">Log In/Out</a>
+            </ul>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
