@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+<body class="container body-content">
+
+<nav th:replace="fragments :: page-header"></nav>
+
+<form method="post" style="max-width:600px;">
+    <div class="form-group">
+        <label th:for="name">Name</label>
+        <input class="form-control" th:field="${choiceColumn.name}" />
+        <span th:errors="${choiceColumn.name}" class="error"></span>
+    </div>
+    <div class="form-group">
+        <label th:for="description">Description</label>
+        <input class="form-control" th:field="${choiceColumn.description}" />
+        <span th:errors="${choiceColumn.description}" class="error"></span>
+    </div>
+
+    <input type="submit" value="Add Choice Column" />
+</form>
+
+</body>
+</html>

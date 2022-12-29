@@ -20,5 +20,14 @@
     </ul>
 </header>
 
+<div th:fragment="page-header">
+    <h1 th:text="${title}">Feed Me!</h1>
+    <ul class="nav">
+        <li class="nav-item"><a class="nav-link" th:href="@{/list}">List</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/add}">Add Choice Columns</a></li>
+        <li class="nav-item" style="float:right;"><a class="nav-link" href="/logout">Log In/Out</a>
+    </ul>
+</div>
+
 </body>
 </html>
