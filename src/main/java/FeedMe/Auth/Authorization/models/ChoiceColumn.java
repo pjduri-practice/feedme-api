@@ -9,11 +9,11 @@ import jakarta.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
-public class ChoiceColumn {
+public class ChoiceColumn extends AbstractEntity {
 
-    @Id
-    @GeneratedValue
-    private int id;
+//    @Id
+//    @GeneratedValue
+//    private int id;
 
     @NotNull
     @Size(min = 1, max = 255)
@@ -25,13 +25,14 @@ public class ChoiceColumn {
     public ChoiceColumn() {}
 
     public ChoiceColumn(String name, String description) {
+        super();
         this.name = name;
         this.description = description;
     }
 
-    public int getId() {
-        return id;
-    }
+//    public int getId() {
+//        return id;
+//    }
 
     public String getName() {
         return name;
@@ -54,17 +55,17 @@ public class ChoiceColumn {
         return name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChoiceColumn that = (ChoiceColumn) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        ChoiceColumn that = (ChoiceColumn) o;
+//        return id == that.id;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id);
+//    }
 
 }
