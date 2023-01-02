@@ -4,15 +4,18 @@ import FeedMe.Auth.Authorization.data.ChoiceColumnRepository;
 import FeedMe.Auth.Authorization.models.ChoiceColumn;
 import FeedMe.Auth.Authorization.models.ChoiceColumnData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+//import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 
-@Controller
-@RequestMapping(value = "list")
+@CrossOrigin(origins = "http://localhost:8080")
+@RestController
+@RequestMapping("/api")
 public class ChoiceColumnController {
 
     @Autowired
