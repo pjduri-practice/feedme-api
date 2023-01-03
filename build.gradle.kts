@@ -19,6 +19,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.hibernate:hibernate-core:6.1.6.Final")
 	implementation("org.springframework.security:spring-security-crypto")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 
 	// json web tokens
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
