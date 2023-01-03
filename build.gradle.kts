@@ -19,6 +19,15 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.hibernate:hibernate-core:6.1.6.Final")
 	implementation("org.springframework.security:spring-security-crypto")
+
+	// json web tokens
+	implementation("io.jsonwebtoken:jjwt:0.9.1")
+
+	// needed for jjwt to work in Java 12+
+	implementation("com.sun.activation:javax.activation:1.2.0")
+	implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+	runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
+
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -5,13 +5,15 @@ import FeedMe.Auth.Authorization.models.ChoiceColumn;
 import FeedMe.Auth.Authorization.models.ChoiceColumnData;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
@@ -29,24 +31,78 @@ public class ChoiceColumnController {
 
     }
 
-    @RequestMapping("")
-    public String list(Model model) {
-        model.addAttribute("choiceColumns", choiceColumnRepository.findAll());
-        return "list";
-    }
+    @GetMapping("/choiceColumns")
+    public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
+        try {
+            List<ChoiceColumn> choiceColumns = new ArrayList<ChoiceColumn>();
 
-    @RequestMapping(value = "choiceColumns")
-    public String listChoiceColumnsByColumnAndValue(Model model, @RequestParam String column, @RequestParam String value) {
-        Iterable<ChoiceColumn> choiceColumns;
-        if (column.toLowerCase().equals("all")){
-            choiceColumns = choiceColumnRepository.findAll();
-            model.addAttribute("title", "All Choice Columns");
-        } else {
-            choiceColumns = ChoiceColumnData.findByColumnAndValue(column, value, choiceColumnRepository.findAll());
-            model.addAttribute("title", "ChoiceColumns with " + columnChoices.get(column) + ": " + value);
+            if (name == null)
+                choiceColumnRepository.findAll().forEach(choiceColumns::add);
+            else
+                choiceColumns.addAll(choiceColumnRepository.findByNameContaining(name));
+
+            if (choiceColumns.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(choiceColumns, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        model.addAttribute("choiceColumns", choiceColumns);
-
-        return "list-choiceColumns";
     }
+    @GetMapping("/choiceColumns/{id}")
+    public ResponseEntity<ChoiceColumn> getChoiceColumnById(@PathVariable("id") int id) {
+        Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findById(id);
+
+        return choiceColumnData.map(choiceColumn ->
+                new ResponseEntity<>(choiceColumn, HttpStatus.OK)).orElseGet(() ->
+                new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/choiceColumns")
+    public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn) {
+        try {
+            ChoiceColumn _choiceColumn = choiceColumnRepository
+                    .save(new ChoiceColumn(choiceColumn.getName(), choiceColumn.getDescription()));
+            return new ResponseEntity<>(_choiceColumn, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/choiceColumns/{id}")
+    public ResponseEntity<ChoiceColumn> updateChoiceColumn(@PathVariable("id") int id, @RequestBody ChoiceColumn choiceColumn) {
+        Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findById(id);
+
+        if (choiceColumnData.isPresent()) {
+            ChoiceColumn _choiceColumn = choiceColumnData.get();
+            _choiceColumn.setName(choiceColumn.getName());
+            _choiceColumn.setDescription(choiceColumn.getDescription());
+            return new ResponseEntity<>(choiceColumnRepository.save(_choiceColumn), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/choiceColumns/{id}")
+    public ResponseEntity<HttpStatus> deleteChoiceColumn(@PathVariable("id") int id) {
+        try {
+            choiceColumnRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/choiceColumns")
+    public ResponseEntity<HttpStatus> deleteAllChoiceColumns() {
+        try {
+            choiceColumnRepository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
 }
