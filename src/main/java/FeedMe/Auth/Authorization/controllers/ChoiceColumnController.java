@@ -2,12 +2,9 @@ package FeedMe.Auth.Authorization.controllers;
 
 import FeedMe.Auth.Authorization.data.ChoiceColumnRepository;
 import FeedMe.Auth.Authorization.models.ChoiceColumn;
-import FeedMe.Auth.Authorization.models.ChoiceColumnData;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
