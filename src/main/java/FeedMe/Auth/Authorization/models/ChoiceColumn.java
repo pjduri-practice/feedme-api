@@ -1,19 +1,13 @@
 package FeedMe.Auth.Authorization.models;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.Objects;
-
 @Entity
+@Table(name = "choice_columns")
 public class ChoiceColumn extends AbstractEntity {
-
-//    @Id
-//    @GeneratedValue
-//    private int id;
 
     @NotNull
     @Size(min = 1, max = 255)
@@ -29,10 +23,6 @@ public class ChoiceColumn extends AbstractEntity {
         this.name = name;
         this.description = description;
     }
-
-//    public int getId() {
-//        return id;
-//    }
 
     public String getName() {
         return name;
@@ -54,18 +44,5 @@ public class ChoiceColumn extends AbstractEntity {
     public String toString() {
         return name;
     }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        ChoiceColumn that = (ChoiceColumn) o;
-//        return id == that.id;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(id);
-//    }
 
 }
