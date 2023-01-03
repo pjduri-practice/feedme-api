@@ -5,6 +5,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "choice_columns")
 public class ChoiceColumn extends AbstractEntity {
@@ -13,15 +16,14 @@ public class ChoiceColumn extends AbstractEntity {
     @Size(min = 1, max = 255)
     private String name;
 
-    @NotNull
-    private String description;
+    private List<String> items = new ArrayList<>();
 
     public ChoiceColumn() {}
 
-    public ChoiceColumn(String name, String description) {
+    public ChoiceColumn(String name, List<String> items) {
         super();
         this.name = name;
-        this.description = description;
+        this.items = items;
     }
 
     public String getName() {
@@ -32,12 +34,12 @@ public class ChoiceColumn extends AbstractEntity {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public List<String> getItems() {
+        return items;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setItems(List<String> items) {
+        this.items = items;
     }
 
     @Override

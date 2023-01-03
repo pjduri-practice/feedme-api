@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,14 +18,6 @@ public class ChoiceColumnController {
 
     @Autowired
     private ChoiceColumnRepository choiceColumnRepository;
-
-    static HashMap<String, String> columnChoices = new HashMap<>();
-
-    public ChoiceColumnController () {
-
-        columnChoices.put("all", "All");
-
-    }
 
     @GetMapping("/choiceColumns")
     public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
@@ -47,6 +38,7 @@ public class ChoiceColumnController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/choiceColumns/{id}")
     public ResponseEntity<ChoiceColumn> getChoiceColumnById(@PathVariable("id") int id) {
         Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findById(id);
@@ -60,7 +52,7 @@ public class ChoiceColumnController {
     public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn) {
         try {
             ChoiceColumn _choiceColumn = choiceColumnRepository
-                    .save(new ChoiceColumn(choiceColumn.getName(), choiceColumn.getDescription()));
+                    .save(new ChoiceColumn(choiceColumn.getName(), choiceColumn.getItems()));
             return new ResponseEntity<>(_choiceColumn, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -74,7 +66,7 @@ public class ChoiceColumnController {
         if (choiceColumnData.isPresent()) {
             ChoiceColumn _choiceColumn = choiceColumnData.get();
             _choiceColumn.setName(choiceColumn.getName());
-            _choiceColumn.setDescription(choiceColumn.getDescription());
+            _choiceColumn.setItems(choiceColumn.getItems());
             return new ResponseEntity<>(choiceColumnRepository.save(_choiceColumn), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
