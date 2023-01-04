@@ -1,6 +1,7 @@
 package FeedMe.Auth.Authorization.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,6 +12,9 @@ import java.util.List;
 @Entity
 @Table(name = "choice_columns")
 public class ChoiceColumn extends AbstractEntity {
+
+    @ManyToOne
+    private User user;
 
     @NotNull
     @Size(min = 1, max = 255)
