@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,14 @@ public class ChoiceColumnController {
 
     @Autowired
     private ChoiceColumnRepository choiceColumnRepository;
+
+    static HashMap<String, String> columnChoices = new HashMap<>();
+
+    public ChoiceColumnController () {
+
+        columnChoices.put("all", "All");
+
+    }
 
     @GetMapping("/choiceColumns")
     public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
@@ -38,7 +47,6 @@ public class ChoiceColumnController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @GetMapping("/choiceColumns/{id}")
     public ResponseEntity<ChoiceColumn> getChoiceColumnById(@PathVariable("id") int id) {
         Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findById(id);
