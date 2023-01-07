@@ -24,10 +24,11 @@ public class ChoiceColumn extends AbstractEntity {
 
     public ChoiceColumn() {}
 
-    public ChoiceColumn(String name, List<String> items) {
+    public ChoiceColumn(String name, List<String> items, User user) {
         super();
         this.name = name;
         this.items = items;
+        this.user = user;
     }
 
     public String getName() {
@@ -44,6 +45,14 @@ public class ChoiceColumn extends AbstractEntity {
 
     public void setItems(List<String> items) {
         this.items = items;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

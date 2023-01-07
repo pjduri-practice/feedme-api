@@ -18,9 +18,6 @@ import java.util.List;
 })
 public class User extends AbstractEntity {
 
-    @OneToMany
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private List<ChoiceColumn> choiceColumns = new ArrayList<>();
     @NotBlank
     @Size(max = 20)
     private String username;
@@ -34,6 +31,10 @@ public class User extends AbstractEntity {
     private String pwHash;
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    @OneToMany
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private List<ChoiceColumn> choiceColumns = new ArrayList<>();
 
     public User() {}
 
@@ -70,4 +71,9 @@ public class User extends AbstractEntity {
     public void setPwHash(String pwHash) {
         this.pwHash = pwHash;
     }
+
+    public List<ChoiceColumn> getChoiceColumns() {
+        return choiceColumns;
+    }
+
 }
