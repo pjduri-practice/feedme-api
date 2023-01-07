@@ -4,7 +4,6 @@ import FeedMe.Auth.Authorization.data.ChoiceColumnRepository;
 import FeedMe.Auth.Authorization.data.UserRepository;
 import FeedMe.Auth.Authorization.models.ChoiceColumn;
 import FeedMe.Auth.Authorization.models.User;
-import FeedMe.Auth.Authorization.models.dto.UserInfoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +26,25 @@ public class ChoiceColumnController {
     @Autowired
     private UserRepository userRepository;
 
+    public User getLoggedInUser () {
+        String username = "";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            username = authentication.getName();
+        }
 
+        if (username != null) {
+
+            Optional<User> user = userRepository.findByUsername(username);
+            if (user.isPresent()) {
+
+                User userEntity = user.get();
+                return userEntity;
+            }
+        }
+        return null;
+    }
 
     @GetMapping("/choiceColumns")
     public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
@@ -51,6 +65,7 @@ public class ChoiceColumnController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/choiceColumns/{id}")
     public ResponseEntity<ChoiceColumn> getChoiceColumnById(@PathVariable("id") int id) {
         Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findById(id);
@@ -61,30 +76,14 @@ public class ChoiceColumnController {
     }
 
     @PostMapping("/choiceColumns")
-    public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn,Authentication authentication) {
-
-        String username = "";
-
-        authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            username = authentication.getName();
-        }
-
-        if (username != null) {
-
-            Optional<User> user = userRepository.findByUsername(username);
-            if (user.isPresent()) {
-
-                User userEntity = user.get();
-                choiceColumn.setUser(userEntity);
-            }
-        }
+    public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn) {
 
         try {
 
-
             ChoiceColumn _choiceColumn = choiceColumnRepository
-                    .save(new ChoiceColumn(choiceColumn.getName(), choiceColumn.getItems(), choiceColumn.getUser()));
+                    .save(new ChoiceColumn(choiceColumn.getName(),
+                            choiceColumn.getItems(),
+                            getLoggedInUser()));
             return new ResponseEntity<>(_choiceColumn, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
