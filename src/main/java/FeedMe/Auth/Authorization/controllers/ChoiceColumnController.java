@@ -45,16 +45,32 @@ public class ChoiceColumnController {
         }
         return null;
     }
+//      Keeping this method commented out for possibility of adding admin privileges in future
+//    @GetMapping("/choiceColumns")
+//    public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
+//        try {
+//            List<ChoiceColumn> choiceColumns = new ArrayList<ChoiceColumn>();
+//
+//            if (name == null)
+//                choiceColumnRepository.findAll().forEach(choiceColumns::add);
+//            else
+//                choiceColumns.addAll(choiceColumnRepository.findByNameContaining(name));
+//
+//            if (choiceColumns.isEmpty()) {
+//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//            }
+//
+//            return new ResponseEntity<>(choiceColumns, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @GetMapping("/choiceColumns")
-    public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<ChoiceColumn>> getChoiceColumnsByUser(Authentication authentication) {
         try {
-            List<ChoiceColumn> choiceColumns = new ArrayList<ChoiceColumn>();
-
-            if (name == null)
-                choiceColumnRepository.findAll().forEach(choiceColumns::add);
-            else
-                choiceColumns.addAll(choiceColumnRepository.findByNameContaining(name));
+            User user = getLoggedInUser(authentication);
+            List<ChoiceColumn> choiceColumns = choiceColumnRepository.findByUser(user);
 
             if (choiceColumns.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -63,6 +79,7 @@ public class ChoiceColumnController {
             return new ResponseEntity<>(choiceColumns, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
 
