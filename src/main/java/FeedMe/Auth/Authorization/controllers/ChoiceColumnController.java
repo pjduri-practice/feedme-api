@@ -90,8 +90,10 @@ public class ChoiceColumnController {
 
     @PutMapping("/choiceColumns/{id}")
     public ResponseEntity<ChoiceColumn> updateChoiceColumn(@PathVariable("id") int id,
-                                                           @RequestBody ChoiceColumn choiceColumn) {
-        Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findById(id);
+                                                           @RequestBody ChoiceColumn choiceColumn,
+                                                           Authentication authentication) {
+        User user = getLoggedInUser(authentication);
+        Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findByUserAndId(user, id);
 
         if (choiceColumnData.isPresent()) {
             ChoiceColumn _choiceColumn = choiceColumnData.get();
