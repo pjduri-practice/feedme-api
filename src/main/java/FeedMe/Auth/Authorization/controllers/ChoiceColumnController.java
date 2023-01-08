@@ -45,8 +45,12 @@ public class ChoiceColumnController {
         }
         return null;
     }
-//      Keeping this method commented out for possibility of adding admin privileges in future
-//    @GetMapping("/choiceColumns")
+
+//  TODO: add roles and refactor this or move to an admin controller later
+
+//  TODO: restrict access to byId methods to user who created associated ChoiceColumns
+
+//    @GetMapping("/admin/choiceColumns")
 //    public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
 //        try {
 //            List<ChoiceColumn> choiceColumns = new ArrayList<ChoiceColumn>();
@@ -131,15 +135,16 @@ public class ChoiceColumnController {
         }
     }
 
-    @DeleteMapping("/choiceColumns")
-    public ResponseEntity<HttpStatus> deleteAllChoiceColumns() {
-        try {
-            choiceColumnRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+// TODO: decide if we want to keep the delete all ChoiceColumns method
 
-    }
+//    @DeleteMapping("/admin/choiceColumns")
+//    public ResponseEntity<HttpStatus> deleteAllChoiceColumns() {
+//        try {
+//            choiceColumnRepository.deleteAll();
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 }
