@@ -1,13 +1,15 @@
 package FeedMe.Auth.Authorization.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -30,6 +32,12 @@ public class User extends AbstractEntity {
     private String pwHash;
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    // ensure our choice columns are lazily loaded (only load/read them when specifically requested)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonManagedReference // Set this reference as a managed reference for the JSON marshalling
+    private List<ChoiceColumn> choiceColumns = new ArrayList<>();
 
     public User() {}
 
@@ -66,4 +74,9 @@ public class User extends AbstractEntity {
     public void setPwHash(String pwHash) {
         this.pwHash = pwHash;
     }
+
+    public List<ChoiceColumn> getChoiceColumns() {
+        return choiceColumns;
+    }
+
 }

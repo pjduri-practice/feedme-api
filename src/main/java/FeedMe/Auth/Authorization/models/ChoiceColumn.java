@@ -1,6 +1,9 @@
 package FeedMe.Auth.Authorization.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,6 +15,11 @@ import java.util.List;
 @Table(name = "choice_columns")
 public class ChoiceColumn extends AbstractEntity {
 
+    // ensure our user is lazily loaded (only load/read it when specifically requested)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference // Set this reference as a back reference for the JSON marshalling
+    private User user;
+
     @NotNull
     @Size(min = 1, max = 255)
     private String name;
@@ -20,10 +28,11 @@ public class ChoiceColumn extends AbstractEntity {
 
     public ChoiceColumn() {}
 
-    public ChoiceColumn(String name, List<String> items) {
+    public ChoiceColumn(String name, List<String> items, User user) {
         super();
         this.name = name;
         this.items = items;
+        this.user = user;
     }
 
     public String getName() {
@@ -40,6 +49,14 @@ public class ChoiceColumn extends AbstractEntity {
 
     public void setItems(List<String> items) {
         this.items = items;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

@@ -1,14 +1,18 @@
 package FeedMe.Auth.Authorization.controllers;
 
 import FeedMe.Auth.Authorization.data.ChoiceColumnRepository;
+import FeedMe.Auth.Authorization.data.UserRepository;
 import FeedMe.Auth.Authorization.models.ChoiceColumn;
+import FeedMe.Auth.Authorization.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,24 +23,58 @@ public class ChoiceColumnController {
 
     @Autowired
     private ChoiceColumnRepository choiceColumnRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    static HashMap<String, String> columnChoices = new HashMap<>();
+    public User getLoggedInUser (Authentication authentication) {
+        String username = null;
+        authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    public ChoiceColumnController () {
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            username = authentication.getName();
+        }
 
-        columnChoices.put("all", "All");
+        if (username != null) {
 
+            Optional<User> user = userRepository.findByUsername(username);
+            if (user.isPresent()) {
+
+                User userEntity = user.get();
+                return userEntity;
+            }
+        }
+        return null;
     }
 
-    @GetMapping("/choiceColumns")
-    public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
-        try {
-            List<ChoiceColumn> choiceColumns = new ArrayList<ChoiceColumn>();
+//  TODO: add roles and refactor this or move to an admin controller later
 
-            if (name == null)
-                choiceColumnRepository.findAll().forEach(choiceColumns::add);
-            else
-                choiceColumns.addAll(choiceColumnRepository.findByNameContaining(name));
+//  TODO: restrict access to byId methods to user who created associated ChoiceColumns
+
+//    @GetMapping("/admin/choiceColumns")
+//    public ResponseEntity<List<ChoiceColumn>> getAllChoiceColumns(@RequestParam(required = false) String name) {
+//        try {
+//            List<ChoiceColumn> choiceColumns = new ArrayList<ChoiceColumn>();
+//
+//            if (name == null)
+//                choiceColumnRepository.findAll().forEach(choiceColumns::add);
+//            else
+//                choiceColumns.addAll(choiceColumnRepository.findByNameContaining(name));
+//
+//            if (choiceColumns.isEmpty()) {
+//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//            }
+//
+//            return new ResponseEntity<>(choiceColumns, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    @GetMapping("/choiceColumns")
+    public ResponseEntity<List<ChoiceColumn>> getChoiceColumnsByUser(Authentication authentication) {
+        try {
+            User user = getLoggedInUser(authentication);
+            List<ChoiceColumn> choiceColumns = choiceColumnRepository.findByUser(user);
 
             if (choiceColumns.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -45,8 +83,10 @@ public class ChoiceColumnController {
             return new ResponseEntity<>(choiceColumns, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
+
     @GetMapping("/choiceColumns/{id}")
     public ResponseEntity<ChoiceColumn> getChoiceColumnById(@PathVariable("id") int id) {
         Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findById(id);
@@ -57,10 +97,14 @@ public class ChoiceColumnController {
     }
 
     @PostMapping("/choiceColumns")
-    public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn) {
+    public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn, Authentication authentication) {
+
         try {
+
             ChoiceColumn _choiceColumn = choiceColumnRepository
-                    .save(new ChoiceColumn(choiceColumn.getName(), choiceColumn.getItems()));
+                    .save(new ChoiceColumn(choiceColumn.getName(),
+                            choiceColumn.getItems(),
+                            getLoggedInUser(authentication)));
             return new ResponseEntity<>(_choiceColumn, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -91,15 +135,16 @@ public class ChoiceColumnController {
         }
     }
 
-    @DeleteMapping("/choiceColumns")
-    public ResponseEntity<HttpStatus> deleteAllChoiceColumns() {
-        try {
-            choiceColumnRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+// TODO: decide if we want to keep the delete all ChoiceColumns method
 
-    }
+//    @DeleteMapping("/admin/choiceColumns")
+//    public ResponseEntity<HttpStatus> deleteAllChoiceColumns() {
+//        try {
+//            choiceColumnRepository.deleteAll();
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 }
