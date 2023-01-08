@@ -28,6 +28,7 @@ public class ChoiceColumnController {
 
     public User getLoggedInUser (Authentication authentication) {
         String username = null;
+        authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             username = authentication.getName();
