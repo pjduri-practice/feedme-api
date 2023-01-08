@@ -1,5 +1,6 @@
 package FeedMe.Auth.Authorization.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -32,8 +33,10 @@ public class User extends AbstractEntity {
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    @OneToMany
+    // ensure our choice columns are lazily loaded (only load/read them when specifically requested)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonManagedReference // Set this reference as a managed reference for the JSON marshalling
     private List<ChoiceColumn> choiceColumns = new ArrayList<>();
 
     public User() {}

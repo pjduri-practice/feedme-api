@@ -26,9 +26,8 @@ public class ChoiceColumnController {
     @Autowired
     private UserRepository userRepository;
 
-    public User getLoggedInUser () {
-        String username = "";
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public User getLoggedInUser (Authentication authentication) {
+        String username = null;
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             username = authentication.getName();
@@ -76,14 +75,14 @@ public class ChoiceColumnController {
     }
 
     @PostMapping("/choiceColumns")
-    public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn) {
+    public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn, Authentication authentication) {
 
         try {
 
             ChoiceColumn _choiceColumn = choiceColumnRepository
                     .save(new ChoiceColumn(choiceColumn.getName(),
                             choiceColumn.getItems(),
-                            getLoggedInUser()));
+                            getLoggedInUser(authentication)));
             return new ResponseEntity<>(_choiceColumn, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

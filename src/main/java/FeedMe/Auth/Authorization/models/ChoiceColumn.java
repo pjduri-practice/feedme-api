@@ -1,6 +1,8 @@
 package FeedMe.Auth.Authorization.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +15,9 @@ import java.util.List;
 @Table(name = "choice_columns")
 public class ChoiceColumn extends AbstractEntity {
 
-    @ManyToOne
+    // ensure our user is lazily loaded (only load/read it when specifically requested)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference // Set this reference as a back reference for the JSON marshalling
     private User user;
 
     @NotNull
