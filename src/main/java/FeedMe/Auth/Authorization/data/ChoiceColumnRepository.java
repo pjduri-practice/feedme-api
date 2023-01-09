@@ -6,9 +6,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChoiceColumnRepository extends CrudRepository<ChoiceColumn, Integer> {
     List<ChoiceColumn> findByNameContaining(String title);
     List<ChoiceColumn> findByUser(User user);
+    Optional<ChoiceColumn> findByUserAndId(User user, int id);
 }
