@@ -81,7 +81,8 @@ public class ChoiceColumnController {
             ChoiceColumn _choiceColumn = choiceColumnRepository
                     .save(new ChoiceColumn(choiceColumn.getName(),
                             choiceColumn.getItems(),
-                            getLoggedInUser(authentication)));
+                            getLoggedInUser(authentication),
+                            choiceColumn.getColumnLayout()));
             return new ResponseEntity<>(_choiceColumn, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -39,6 +39,11 @@ public class User extends AbstractEntity {
     @JsonManagedReference // Set this reference as a managed reference for the JSON marshalling
     private List<ChoiceColumn> choiceColumns = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonManagedReference // Set this reference as a managed reference for the JSON marshalling
+    private List<ColumnLayout> columnLayouts = new ArrayList<>();
+
     public User() {}
 
     public User(String username, String email, String pwHash) {
@@ -79,4 +84,7 @@ public class User extends AbstractEntity {
         return choiceColumns;
     }
 
+    public List<ColumnLayout> getColumnLayouts() {
+        return columnLayouts;
+    }
 }

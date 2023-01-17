@@ -20,6 +20,10 @@ public class ChoiceColumn extends AbstractEntity {
     @JsonBackReference // Set this reference as a back reference for the JSON marshalling
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference // Set this reference as a back reference for the JSON marshalling
+    private ColumnLayout columnLayout;
+
     @NotNull
     @Size(min = 1, max = 255)
     private String name;
@@ -28,11 +32,12 @@ public class ChoiceColumn extends AbstractEntity {
 
     public ChoiceColumn() {}
 
-    public ChoiceColumn(String name, List<String> items, User user) {
+    public ChoiceColumn(String name, List<String> items, User user, ColumnLayout columnLayout) {
         super();
         this.name = name;
         this.items = items;
         this.user = user;
+        this.columnLayout = columnLayout;
     }
 
     public String getName() {
@@ -57,6 +62,10 @@ public class ChoiceColumn extends AbstractEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public ColumnLayout getColumnLayout() {
+        return columnLayout;
     }
 
     @Override
