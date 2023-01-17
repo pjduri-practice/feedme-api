@@ -11,18 +11,18 @@ import java.util.List;
 
 @Entity
 @Table(name = "column_layouts")
-public class ColumnLayout extends AbstractEntity{
+public class ColumnLayout extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference // Set this reference as a back reference for the JSON marshalling
+    @JsonBackReference(value = "column_layout_user_reference") // Set this reference as a back reference for the JSON marshalling
     private User user;
 
     @NotNull
     @Size(min = 1, max = 255)
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonManagedReference // Set this reference as a managed reference for the JSON marshalling
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "column_layout_id", referencedColumnName = "id")
+    @JsonManagedReference(value = "choice_column_layout_reference") // Set this reference as a managed reference for the JSON marshalling
     private List<ChoiceColumn> choiceColumns = new ArrayList<>();
 
     public ColumnLayout() {}
@@ -47,5 +47,13 @@ public class ColumnLayout extends AbstractEntity{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setChoiceColumns(List<ChoiceColumn> choiceColumns) {
+        this.choiceColumns = choiceColumns;
     }
 }

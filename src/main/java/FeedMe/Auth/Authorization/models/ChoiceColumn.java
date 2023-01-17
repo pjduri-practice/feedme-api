@@ -17,11 +17,11 @@ public class ChoiceColumn extends AbstractEntity {
 
     // ensure our user is lazily loaded (only load/read it when specifically requested)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference // Set this reference as a back reference for the JSON marshalling
+    @JsonBackReference(value = "choice_column_user_reference") // Set this reference as a back reference for the JSON marshalling
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference // Set this reference as a back reference for the JSON marshalling
+    @JsonBackReference(value = "choice_column_layout_reference") // Set this reference as a back reference for the JSON marshalling
     private ColumnLayout columnLayout;
 
     @NotNull
@@ -66,6 +66,10 @@ public class ChoiceColumn extends AbstractEntity {
 
     public ColumnLayout getColumnLayout() {
         return columnLayout;
+    }
+
+    public void setColumnLayout(ColumnLayout columnLayout) {
+        this.columnLayout = columnLayout;
     }
 
     @Override

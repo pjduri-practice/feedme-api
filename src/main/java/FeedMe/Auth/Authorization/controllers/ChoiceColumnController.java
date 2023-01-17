@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/choiceColumns")
 public class ChoiceColumnController {
 
     @Autowired
@@ -46,7 +46,7 @@ public class ChoiceColumnController {
         return null;
     }
 
-    @GetMapping("/choiceColumns")
+    @GetMapping
     public ResponseEntity<List<ChoiceColumn>> getChoiceColumnsByUser(Authentication authentication) {
         try {
             User user = getLoggedInUser(authentication);
@@ -63,7 +63,7 @@ public class ChoiceColumnController {
         }
     }
 
-    @GetMapping("/choiceColumns/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<ChoiceColumn> getChoiceColumnByUserAndId(@PathVariable("id") int id,
                                                                    Authentication authentication) {
         User user = getLoggedInUser(authentication);
@@ -74,7 +74,7 @@ public class ChoiceColumnController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/choiceColumns")
+    @PostMapping
     public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn,
                                                            Authentication authentication) {
         try {
@@ -89,7 +89,7 @@ public class ChoiceColumnController {
         }
     }
 
-    @PutMapping("/choiceColumns/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<ChoiceColumn> updateChoiceColumn(@PathVariable("id") int id,
                                                            @RequestBody ChoiceColumn choiceColumn,
                                                            Authentication authentication) {
@@ -106,7 +106,7 @@ public class ChoiceColumnController {
         }
     }
 
-    @DeleteMapping("/choiceColumns/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<HttpStatus> deleteChoiceColumn(@PathVariable("id") int id,
                                                          Authentication authentication) {
         User user = getLoggedInUser(authentication);

@@ -25,9 +25,9 @@ public class ColumnLayoutController {
     @Autowired
     private UserRepository userRepository;
 
-    public User getLoggedInUser(Authentication authentication) {
+    public User getLoggedInUser() {
         String username = null;
-        authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             username = authentication.getName();
@@ -45,10 +45,10 @@ public class ColumnLayoutController {
         return null;
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<ColumnLayout>> getColumnLayoutsByUser(Authentication authentication) {
+    @GetMapping
+    public ResponseEntity<List<ColumnLayout>> getColumnLayoutsByUser() {
         try {
-            User user = getLoggedInUser(authentication);
+            User user = getLoggedInUser();
             List<ColumnLayout> columnLayouts = columnLayoutRepository.findByUser(user);
 
             if (columnLayouts.isEmpty()) {
@@ -63,9 +63,8 @@ public class ColumnLayoutController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ColumnLayout> getColumnLayoutByUserAndId(@PathVariable("id") int id,
-                                                                   Authentication authentication) {
-        User user = getLoggedInUser(authentication);
+    public ResponseEntity<ColumnLayout> getColumnLayoutByUserAndId(@PathVariable("id") int id) {
+        User user = getLoggedInUser();
         Optional<ColumnLayout> columnLayoutData = columnLayoutRepository.findByUserAndId(user, id);
 
         return columnLayoutData.map(columnLayout ->
@@ -73,13 +72,12 @@ public class ColumnLayoutController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("")
-    public ResponseEntity<ColumnLayout> createColumnLayout(@RequestBody ColumnLayout columnLayout,
-                                                           Authentication authentication) {
+    @PostMapping
+    public ResponseEntity<ColumnLayout> createColumnLayout(@RequestBody ColumnLayout columnLayout) {
         try {
             ColumnLayout _columnLayout = columnLayoutRepository
                     .save(new ColumnLayout(columnLayout.getName(),
-                            getLoggedInUser(authentication)));
+                            getLoggedInUser()));
             return new ResponseEntity<>(_columnLayout, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,9 +86,8 @@ public class ColumnLayoutController {
 
     @PutMapping("{id}")
     public ResponseEntity<ColumnLayout> updateColumnLayout(@PathVariable("id") int id,
-                                                           @RequestBody ColumnLayout columnLayout,
-                                                           Authentication authentication) {
-        User user = getLoggedInUser(authentication);
+                                                           @RequestBody ColumnLayout columnLayout) {
+        User user = getLoggedInUser();
         Optional<ColumnLayout> columnLayoutData = columnLayoutRepository.findByUserAndId(user, id);
 
         if (columnLayoutData.isPresent()) {
@@ -103,9 +100,8 @@ public class ColumnLayoutController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<HttpStatus> deleteColumnLayout(@PathVariable("id") int id,
-                                                         Authentication authentication) {
-        User user = getLoggedInUser(authentication);
+    public ResponseEntity<HttpStatus> deleteColumnLayout(@PathVariable("id") int id) {
+        User user = getLoggedInUser();
         Optional<ColumnLayout> columnLayout = columnLayoutRepository.findById(id);
         try {
             if (columnLayout.isPresent()) {
