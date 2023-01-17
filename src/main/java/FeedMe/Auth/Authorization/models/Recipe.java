@@ -1,7 +1,10 @@
 package FeedMe.Auth.Authorization.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Recipe {
 
     private String label;
@@ -11,6 +14,8 @@ public class Recipe {
     private String cuisineType;
     private String mealType;
     private String dishType;
+
+    public Recipe(){}
 
     public Recipe(String label,
                   String image,
@@ -54,6 +59,34 @@ public class Recipe {
 
     public String getDishType() {
         return dishType;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setIngredientLines(List<String> ingredientLines) {
+        this.ingredientLines = ingredientLines;
+    }
+
+    public void setCuisineType(String cuisineType) {
+        this.cuisineType = cuisineType;
+    }
+
+    public void setMealType(String mealType) {
+        this.mealType = mealType;
+    }
+
+    public void setDishType(String dishType) {
+        this.dishType = dishType;
     }
 
 }
