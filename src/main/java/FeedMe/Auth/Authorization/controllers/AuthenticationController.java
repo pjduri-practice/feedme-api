@@ -1,6 +1,10 @@
 package FeedMe.Auth.Authorization.controllers;
 
+import FeedMe.Auth.Authorization.data.ChoiceColumnRepository;
+import FeedMe.Auth.Authorization.data.ColumnLayoutRepository;
 import FeedMe.Auth.Authorization.data.UserRepository;
+import FeedMe.Auth.Authorization.models.ChoiceColumn;
+import FeedMe.Auth.Authorization.models.ColumnLayout;
 import FeedMe.Auth.Authorization.models.User;
 import FeedMe.Auth.Authorization.models.dto.LoginRequest;
 import FeedMe.Auth.Authorization.models.dto.MessageResponse;
@@ -19,6 +23,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Handles routes for user sign-up, sign-in, and sign-out.<br>
@@ -39,6 +46,12 @@ public class AuthenticationController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    ColumnLayoutRepository columnLayoutRepository;
+
+    @Autowired
+    ChoiceColumnRepository choiceColumnRepository;
 
     /**
      * Handles a user sign-in request, accepting a username and password to generate a
@@ -103,7 +116,23 @@ public class AuthenticationController {
                 encoder.encode(signUpRequest.getPassword()));
 
         // ...and save it to the database.
-        userRepository.save(user);
+        user = userRepository.save(user);
+
+        // creating a default column layout on register
+
+        ColumnLayout columnLayout = new ColumnLayout("Default", user);
+
+        columnLayout = columnLayoutRepository.save(columnLayout);
+
+        // create the default columns
+
+        ChoiceColumn choiceColumnSnacks = new ChoiceColumn("Snacks", new ArrayList<>(Arrays.asList("")), user, columnLayout);
+
+        ChoiceColumn choiceColumnTakeOut = new ChoiceColumn("Take Out", new ArrayList<>(Arrays.asList("")), user, columnLayout);
+
+        choiceColumnRepository.save(choiceColumnSnacks);
+
+        choiceColumnRepository.save(choiceColumnTakeOut);
 
         // Responds to the client with a 200 OK status and a message notifying of
         // successful user registration.
