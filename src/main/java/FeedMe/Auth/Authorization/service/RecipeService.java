@@ -12,16 +12,15 @@ public class RecipeService {
     @Autowired
     RestTemplate template = new RestTemplate();
 
-    private String app_id = EdamamKeys.getApp_id();
-    private String app_key = EdamamKeys.getApp_key();
+    private static final String app_id = EdamamKeys.getApp_id();
+    private static final String app_key = EdamamKeys.getApp_key();
 
     public Recipe[] findBySearchTerms(String searchTerms) {
         return template.getForObject
-                ("https://api.edamam.com/api/recipes/v2?type=public&beta=false&" +
-                        "q=" +
-                        searchTerms +
-                        "&app_id=15a9aaa0" +
-                        "&app_key=2ed89ec87d7b69f8e0f97a69ff68d790" +
+                (String.format("https://api.edamam.com/api/recipes/v2?type=public&beta=false&" +
+                        "q=%s" +
+                        "&app_id=%s" +
+                        "&app_key=%s" +
                         "&random=true&" +
                         "field=label&" +
                         "field=image&" +
@@ -29,7 +28,7 @@ public class RecipeService {
                         "field=ingredientLines&" +
                         "field=cuisineType&" +
                         "field=mealType&" +
-                        "field=dishType", Recipe[].class);
+                        "field=dishType", searchTerms, app_id, app_key), Recipe[].class);
     }
 
 }
