@@ -60,7 +60,7 @@ public class WebSecurityConfig {
     /**
      * The main application route filter chain that guards all desired
      * routes behind a basic JWT authentication implementation.
-     * @throws Exception
+     //* @throws Exception
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
