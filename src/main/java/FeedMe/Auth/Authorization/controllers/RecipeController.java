@@ -19,11 +19,11 @@ public class RecipeController {
     @Autowired
     private RecipeService recipeService;
 
-    @GetMapping("/search/{search-terms}")
-    public List<Object> searchForRecipe(@PathVariable("search-terms") String searchTerms) {
+    @GetMapping("/search/ingredients/{ingredients}")
+    public List<Object> searchForRecipeByIngredients(@PathVariable("ingredients") String ingredients) {
 
         ResponseEntity<EdamamQuote> edamamResponse =
-                new ResponseEntity<>(recipeService.findBySearchTerms(searchTerms), HttpStatus.OK);
+                new ResponseEntity<>(recipeService.findBySearchTerms(ingredients), HttpStatus.OK);
         List<Object> recipeList = Objects.requireNonNull(edamamResponse.getBody()).getHits();
         return recipeList;
     }
