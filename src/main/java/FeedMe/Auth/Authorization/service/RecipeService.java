@@ -22,6 +22,7 @@ public class RecipeService {
                         "&app_id=%s" +
                         "&app_key=%s" +
                         "&random=true&" +
+                        "&field=uri" +
                         "field=label&" +
                         "field=image&" +
                         "field=url&" +
