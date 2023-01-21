@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/public/")
+@RequestMapping("/api/")
 public class RecipeController {
 
     @Autowired
