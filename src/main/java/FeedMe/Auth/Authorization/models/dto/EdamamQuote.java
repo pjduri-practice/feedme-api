@@ -1,6 +1,5 @@
 package FeedMe.Auth.Authorization.models.dto;
 
-import FeedMe.Auth.Authorization.models.Recipe;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
