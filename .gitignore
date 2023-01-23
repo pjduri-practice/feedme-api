@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-### Edamam credentials ###
-/src/main/java/FeedMe/Auth/Authorization/EdamamKeys.java
+# Application Properties
+application.properties

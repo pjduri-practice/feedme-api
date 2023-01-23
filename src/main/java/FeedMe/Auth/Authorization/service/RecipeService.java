@@ -12,8 +12,8 @@ public class RecipeService {
     @Autowired
     private RestTemplate template = new RestTemplate();
 
-    private static final String app_id = EdamamKeys.getApp_id();
-    private static final String app_key = EdamamKeys.getApp_key();
+    @Autowired
+    private EdamamKeys edamamKeys;
 
     public EdamamQuote findBySearchIngredients(String searchIngredients) {
         return template.getForObject
@@ -29,7 +29,7 @@ public class RecipeService {
                         "field=ingredientLines&" +
                         "field=cuisineType&" +
                         "field=mealType&" +
-                        "field=dishType", searchIngredients, app_id, app_key), EdamamQuote.class);
+                        "field=dishType", searchIngredients, edamamKeys.getAppId(), edamamKeys.getAppKey()), EdamamQuote.class);
     }
 
     public EdamamQuote findBySearchHealthTags(String searchHealthRequirements) {
@@ -46,7 +46,7 @@ public class RecipeService {
                         "field=ingredientLines&" +
                         "field=cuisineType&" +
                         "field=mealType&" +
-                        "field=dishType", app_id, app_key, searchHealthRequirements), EdamamQuote.class);
+                        "field=dishType", edamamKeys.getAppId(), edamamKeys.getAppKey(), searchHealthRequirements), EdamamQuote.class);
     }
 
     public EdamamQuote findBySearchIngredientsAndHealthTags(String searchIngredients, String searchHealth) {
@@ -64,7 +64,7 @@ public class RecipeService {
                         "field=ingredientLines&" +
                         "field=cuisineType&" +
                         "field=mealType&" +
-                        "field=dishType", searchIngredients, app_id, app_key, searchHealth), EdamamQuote.class);
+                        "field=dishType", searchIngredients, edamamKeys.getAppId(), edamamKeys.getAppKey(), searchHealth), EdamamQuote.class);
     }
 
 }
