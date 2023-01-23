@@ -15,7 +15,7 @@ public class UserIngredients extends AbstractEntity {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference(value = "choice_column_user_reference")
+    @JsonBackReference(value = "user_ingredients_user_reference")
     private User user;
 
     public UserIngredients() {}
