@@ -43,7 +43,7 @@ public class UserController {
         if (username != null) {
             // Attempts to find a user via the username recovered from the
             // auth token.
-            Optional<User> user = userRepository.findByUsername(username);
+            Optional<User> user = userRepository.findByUsernameIgnoreCase(username);
             if (user.isPresent()) {
                 // Fetches the user entity if a user was found within the
                 // database and returns a UserInfoResponse object with that
