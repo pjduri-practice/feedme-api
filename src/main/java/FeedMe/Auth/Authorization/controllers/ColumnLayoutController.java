@@ -35,7 +35,7 @@ public class ColumnLayoutController {
 
         if (username != null) {
 
-            Optional<User> user = userRepository.findByUsername(username);
+            Optional<User> user = userRepository.findByUsernameIgnoreCase(username);
             if (user.isPresent()) {
 
                 User userEntity = user.get();
