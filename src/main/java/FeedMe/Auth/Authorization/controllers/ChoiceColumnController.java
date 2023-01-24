@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
-@RequestMapping("/api/choiceColumns")
+@RequestMapping("/api/choice-columns")
 public class ChoiceColumnController {
 
     @Autowired
