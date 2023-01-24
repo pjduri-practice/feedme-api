@@ -20,3 +20,9 @@ spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
 backend.app.jwtCookieName=authcookie
 backend.app.jwtSecret=mySecretKey
 backend.app.jwtExpirationMs=86400000
+
+logging.level.web=DEBUG
+
+# Edamam app key and app id
+edamam.app_id=YOURAPPIDHERE
+edamam.app_key=YOURAPPKEYHERE
