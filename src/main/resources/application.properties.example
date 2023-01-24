@@ -1,7 +1,7 @@
 # Database connection settings
-spring.datasource.url=${FeedMe_Host}
-spring.datasource.username=${FeedMe_Db_Username}
-spring.datasource.password=${FeedMe_Db_Password}
+spring.datasource.url=jdbc:mysql://localhost:3306/feedme
+spring.datasource.username=feedme-liftoff-2022
+spring.datasource.password=angles_front_boots_back_LO_2022
 
 # Specify the DBMS
 spring.jpa.database = MYSQL
@@ -22,3 +22,7 @@ backend.app.jwtSecret=mySecretKey
 backend.app.jwtExpirationMs=86400000
 
 logging.level.web=DEBUG
+
+# Edamam app key and app id
+edamam.app_id=YOURAPPIDHERE
+edamam.app_key=YOURAPPKEYHERE
