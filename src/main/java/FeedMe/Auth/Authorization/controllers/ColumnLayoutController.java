@@ -29,19 +29,13 @@ public class ColumnLayoutController {
         String username = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            username = authentication.getName();
-        }
+        if (!(authentication instanceof AnonymousAuthenticationToken)) username = authentication.getName();
 
         if (username != null) {
-
             Optional<User> user = userRepository.findByUsernameIgnoreCase(username);
-            if (user.isPresent()) {
-
-                User userEntity = user.get();
-                return userEntity;
-            }
+            if (user.isPresent()) return user.get();
         }
+
         return null;
     }
 
@@ -51,9 +45,7 @@ public class ColumnLayoutController {
             User user = getLoggedInUser();
             List<ColumnLayout> columnLayouts = columnLayoutRepository.findByUser(user);
 
-            if (columnLayouts.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
+            if (columnLayouts.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
             return new ResponseEntity<>(columnLayouts, HttpStatus.OK);
         } catch (Exception e) {

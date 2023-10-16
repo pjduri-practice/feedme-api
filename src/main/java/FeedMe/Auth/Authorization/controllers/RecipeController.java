@@ -48,34 +48,3 @@ public class RecipeController {
     }
 
 }
-
-
-
-
-//    attempt to get all methods into one
-//    @GetMapping("/search/{ingredients}/{health}")
-//    public List<Object> searchForRecipeByIngredientsAndHealthTags(@PathVariable(name="ingredients", required = false) String ingredients,
-//                                                                  @PathVariable(name="health", required = false) String health) {
-//        try {
-//            List<Object> recipeList;
-//            if (!ingredients.isBlank() && !health.isBlank()) {
-//
-//                ResponseEntity<EdamamQuote> edamamResponse =
-//                        new ResponseEntity<>(recipeService.findBySearchIngredientsAndHealthTags(ingredients, health), HttpStatus.OK);
-//                recipeList = Objects.requireNonNull(edamamResponse.getBody()).getHits();
-//                return recipeList;
-//            } else if (health.isBlank()) {
-//                ResponseEntity<EdamamQuote> edamamResponse =
-//                        new ResponseEntity<>(recipeService.findBySearchIngredients(ingredients), HttpStatus.OK);
-//                recipeList = Objects.requireNonNull(edamamResponse.getBody()).getHits();
-//                return recipeList;
-//            } else {
-//                ResponseEntity<EdamamQuote> edamamResponse =
-//                        new ResponseEntity<>(recipeService.findBySearchHealthTags(health), HttpStatus.OK);
-//                recipeList = Objects.requireNonNull(edamamResponse.getBody()).getHits();
-//                return recipeList;
-//            }
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }

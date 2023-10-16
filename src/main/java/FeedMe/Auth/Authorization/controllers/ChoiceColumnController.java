@@ -35,14 +35,10 @@ public class ChoiceColumnController {
         }
 
         if (username != null) {
-
             Optional<User> user = userRepository.findByUsernameIgnoreCase(username);
-            if (user.isPresent()) {
-
-                User userEntity = user.get();
-                return userEntity;
-            }
+            if (user.isPresent()) return user.get();
         }
+
         return null;
     }
 

@@ -10,16 +10,16 @@ import jakarta.validation.constraints.Size;
  */
 public class SignupRequest {
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 20, message = "\nUsername must be between 3 and 20 characters")
     private String username;
 
     @NotBlank
     @Size(max = 50)
-    @Email
+    @Email(message = "\nMust use valid email format (e.g. example@test.com)")
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 40)
+    @Size(min = 6, max = 40, message = "\nPassword must be between 6 and 40 characters")
     private String password;
 
     public String getUsername() {

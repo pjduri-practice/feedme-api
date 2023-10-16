@@ -22,10 +22,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Handles routes for user sign-up, sign-in, and sign-out.<br>
@@ -99,15 +101,29 @@ public class AuthenticationController {
      * were provided.
      */
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, Errors errors) {
+        // Create a StringBuilder to collect error messages
+        StringBuilder errorMessages = new StringBuilder();
+
         // Validates that the username being registered does not already exist.
         if (userRepository.existsByUsernameIgnoreCase(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+            errorMessages.append("\nUsername is already taken");
         }
 
         // Validates that the email being registered does not already exist.
         if (userRepository.existsByEmailIgnoreCase(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            errorMessages.append("\nEmail is already in use");
+        }
+
+        if (errors.hasErrors()) {
+            // Loop through errors and append error messages
+            errors.getAllErrors().forEach(error -> {
+                errorMessages.append("\n").append(error.getDefaultMessage());
+            });
+        }
+        if (!errorMessages.isEmpty()) {
+            // Return the error messages as a response
+            return ResponseEntity.badRequest().body(new MessageResponse(errorMessages.toString()));
         }
 
         // Create the user's account...
@@ -126,9 +142,9 @@ public class AuthenticationController {
 
         // create the default columns
 
-        ChoiceColumn choiceColumnSnacks = new ChoiceColumn("Snacks", new ArrayList<>(Arrays.asList("")), user, columnLayout);
+        ChoiceColumn choiceColumnSnacks = new ChoiceColumn("Snacks", new ArrayList<>(List.of("")), user, columnLayout);
 
-        ChoiceColumn choiceColumnTakeOut = new ChoiceColumn("Take Out", new ArrayList<>(Arrays.asList("")), user, columnLayout);
+        ChoiceColumn choiceColumnTakeOut = new ChoiceColumn("Take Out", new ArrayList<>(List.of("")), user, columnLayout);
 
         choiceColumnRepository.save(choiceColumnSnacks);
 
