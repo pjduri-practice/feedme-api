@@ -33,7 +33,7 @@ import java.util.List;
  * Handles routes for user sign-up, sign-in, and sign-out.<br>
  * <b>/api/auth</b>
  */
-@CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
