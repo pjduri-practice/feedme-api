@@ -1,1 +1,1 @@
-rootProject.name = "Authorization"
+rootProject.name = "feedme-api"
