@@ -1,10 +1,8 @@
 package FeedMe.Auth.Authorization.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -28,16 +26,26 @@ public class ChoiceColumn extends AbstractEntity {
     @Size(min = 1, max = 255)
     private String name;
 
-    private List<String> items = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "choice_column_id", referencedColumnName = "id")
+    @JsonManagedReference(value = "choice_column_reference") // Set this reference as a managed reference for the JSON marshalling
+    private List<ChoiceOption> choiceOptions;
 
     public ChoiceColumn() {}
 
-    public ChoiceColumn(String name, List<String> items, User user, ColumnLayout columnLayout) {
+    public ChoiceColumn(String name, ColumnLayout columnLayout, User user, List<ChoiceOption> choiceOptions) {
         super();
         this.name = name;
-        this.items = items;
-        this.user = user;
         this.columnLayout = columnLayout;
+        this.user = user;
+        this.choiceOptions = choiceOptions;
+    }
+
+    public ChoiceColumn(String name, ColumnLayout columnLayout, User user) {
+        this(name, columnLayout, user, new ArrayList<>());
+        this.name = name;
+        this.columnLayout = columnLayout;
+        this.user = user;
     }
 
     public String getName() {
@@ -48,12 +56,12 @@ public class ChoiceColumn extends AbstractEntity {
         this.name = name;
     }
 
-    public List<String> getItems() {
-        return items;
+    public List<ChoiceOption> getChoiceOptions() {
+        return choiceOptions;
     }
 
-    public void setItems(List<String> items) {
-        this.items = items;
+    public void setChoiceOptions(List<ChoiceOption> choiceOptions) {
+        this.choiceOptions = choiceOptions;
     }
 
     public User getUser() {

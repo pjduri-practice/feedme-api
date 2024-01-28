@@ -25,6 +25,11 @@ public class ColumnLayout extends AbstractEntity {
     @JsonManagedReference(value = "choice_column_layout_reference") // Set this reference as a managed reference for the JSON marshalling
     private List<ChoiceColumn> choiceColumns = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "column_layout_id", referencedColumnName = "id")
+    @JsonManagedReference(value = "choice_option_layout_reference") // Set this reference as a managed reference for the JSON marshalling
+    private List<ChoiceOption> choiceOptions = new ArrayList<>();
+
     public ColumnLayout() {}
 
     public ColumnLayout(String name, User user) {
@@ -43,6 +48,14 @@ public class ColumnLayout extends AbstractEntity {
 
     public List<ChoiceColumn> getChoiceColumns() {
         return choiceColumns;
+    }
+
+    public List<ChoiceOption> getChoiceOptions() {
+        return choiceOptions;
+    }
+
+    public void setChoiceOptions(List<ChoiceOption> choiceOptions) {
+        this.choiceOptions = choiceOptions;
     }
 
     public void setName(String name) {

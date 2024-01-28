@@ -46,6 +46,11 @@ public class User extends AbstractEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonManagedReference(value = "choice_option_user_reference") // Set this reference as a managed reference for the JSON marshalling
+    private List<ChoiceOption> choiceOptions = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonManagedReference(value = "user_ingredients_user_reference") // Set this reference as a managed reference for the JSON marshalling
     private List<UserIngredients> userIngredients = new ArrayList<>();
 
@@ -114,4 +119,11 @@ public class User extends AbstractEntity {
         return username;
     }
 
+    public List<ChoiceOption> getChoiceOptions() {
+        return choiceOptions;
+    }
+
+    public void setChoiceOptions(List<ChoiceOption> choiceOptions) {
+        this.choiceOptions = choiceOptions;
+    }
 }

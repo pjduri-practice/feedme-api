@@ -16,7 +16,7 @@ import java.util.Optional;
  * Handles routes for user information.<br>
  * <b>/api/users</b>
  */
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:5173", maxAge = 3600)
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

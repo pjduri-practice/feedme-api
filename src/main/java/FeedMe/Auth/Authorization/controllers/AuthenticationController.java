@@ -1,9 +1,11 @@
 package FeedMe.Auth.Authorization.controllers;
 
 import FeedMe.Auth.Authorization.data.ChoiceColumnRepository;
+import FeedMe.Auth.Authorization.data.ChoiceOptionRepository;
 import FeedMe.Auth.Authorization.data.ColumnLayoutRepository;
 import FeedMe.Auth.Authorization.data.UserRepository;
 import FeedMe.Auth.Authorization.models.ChoiceColumn;
+import FeedMe.Auth.Authorization.models.ChoiceOption;
 import FeedMe.Auth.Authorization.models.ColumnLayout;
 import FeedMe.Auth.Authorization.models.User;
 import FeedMe.Auth.Authorization.models.dto.LoginRequest;
@@ -15,6 +17,7 @@ import FeedMe.Auth.Authorization.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,15 +28,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Handles routes for user sign-up, sign-in, and sign-out.<br>
  * <b>/api/auth</b>
  */
-@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:5173", maxAge = 3600, allowCredentials = "true")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
@@ -55,12 +55,16 @@ public class AuthenticationController {
     @Autowired
     ChoiceColumnRepository choiceColumnRepository;
 
+    @Autowired
+    ChoiceOptionRepository choiceOptionRepository;
+
     /**
      * Handles a user sign-in request, accepting a username and password to generate a
      * JWT (JSON Web Token) if the login request is valid. If valid, the generated JWT
      * is returned to the user in the response as a cookie that will be saved in their
      * browser. Each subsequent request will/should contain this cookie, allowing for
      * the backend to fetch information about the user that is signed in.
+     *
      * @param loginRequest The sign-in request, containing the username and password
      *                     provided by the user.
      * @return A ResponseEntity containing the details of the user signing in and a
@@ -94,6 +98,7 @@ public class AuthenticationController {
     /**
      * Handles a user sign-up request, accepting a username, email address, and
      * password to create a new user entity.
+     *
      * @param signUpRequest The user's desired username, email address, and password.
      * @return If successful, a ResponseEntity containing a MessageResponse informing
      * the client that the user was successfully created. Responds with a 400 Bad
@@ -117,38 +122,44 @@ public class AuthenticationController {
 
         if (errors.hasErrors()) {
             // Loop through errors and append error messages
-            errors.getAllErrors().forEach(error -> {
-                errorMessages.append("\n").append(error.getDefaultMessage());
-            });
+            errors.getAllErrors()
+                    .forEach(error -> errorMessages
+                            .append("\n")
+                            .append(error.getDefaultMessage()));
         }
         if (!errorMessages.isEmpty()) {
             // Return the error messages as a response
+//            return ResponseEntity.badRequest().body(new MessageResponse("BAD!"));
             return ResponseEntity.badRequest().body(new MessageResponse(errorMessages.toString()));
         }
 
         // Create the user's account...
-        User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+        try {
+            User user = new User(signUpRequest.getUsername(),
+                    signUpRequest.getEmail(),
+                    encoder.encode(signUpRequest.getPassword()));
 
-        // ...and save it to the database.
-        user = userRepository.save(user);
+            // ...and save it to the database.
+            user = userRepository.save(user);
 
-        // creating a default column layout on register
+            // creating a default column layout on register
+            ColumnLayout columnLayout = new ColumnLayout("Default", user);
+            columnLayout = columnLayoutRepository.save(columnLayout);
 
-        ColumnLayout columnLayout = new ColumnLayout("Default", user);
+            // create the default columns
+            ChoiceColumn choiceColumnSnacks = new ChoiceColumn("Snacks", columnLayout, user);
+            ChoiceColumn choiceColumnTakeOut = new ChoiceColumn("Take Out", columnLayout, user);
+            choiceColumnRepository.save(choiceColumnSnacks);
+            choiceColumnRepository.save(choiceColumnTakeOut);
 
-        columnLayout = columnLayoutRepository.save(columnLayout);
-
-        // create the default columns
-
-        ChoiceColumn choiceColumnSnacks = new ChoiceColumn("Snacks", new ArrayList<>(List.of("")), user, columnLayout);
-
-        ChoiceColumn choiceColumnTakeOut = new ChoiceColumn("Take Out", new ArrayList<>(List.of("")), user, columnLayout);
-
-        choiceColumnRepository.save(choiceColumnSnacks);
-
-        choiceColumnRepository.save(choiceColumnTakeOut);
+            // create a default ChoiceOption for each column
+            ChoiceOption choiceOptionSnack = new ChoiceOption("", choiceColumnSnacks, user, columnLayout);
+            ChoiceOption choiceOptionTakeout = new ChoiceOption("", choiceColumnTakeOut, user, columnLayout);
+            choiceOptionRepository.save(choiceOptionSnack);
+            choiceOptionRepository.save(choiceOptionTakeout);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(errorMessages.toString()));
+        }
 
         // Responds to the client with a 200 OK status and a message notifying of
         // successful user registration.
@@ -157,6 +168,7 @@ public class AuthenticationController {
 
     /**
      * Handles a user sign-out request, deleting their active JWT session cookie.
+     *
      * @return A ResponseEntity containing a MessageResponse notifying the client
      * that the user has been signed out.
      */

@@ -1,8 +1,11 @@
 package FeedMe.Auth.Authorization.controllers;
 
 import FeedMe.Auth.Authorization.data.ChoiceColumnRepository;
+import FeedMe.Auth.Authorization.data.ChoiceOptionRepository;
 import FeedMe.Auth.Authorization.data.UserRepository;
 import FeedMe.Auth.Authorization.models.ChoiceColumn;
+import FeedMe.Auth.Authorization.models.ChoiceOption;
+import FeedMe.Auth.Authorization.models.ColumnLayout;
 import FeedMe.Auth.Authorization.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,11 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/choice-columns")
 public class ChoiceColumnController {
@@ -25,6 +27,9 @@ public class ChoiceColumnController {
     private ChoiceColumnRepository choiceColumnRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ChoiceOptionRepository choiceOptionRepository;
 
     public User getLoggedInUser(Authentication authentication) {
         String username = null;
@@ -46,6 +51,8 @@ public class ChoiceColumnController {
     public ResponseEntity<List<ChoiceColumn>> getChoiceColumnsByUser(Authentication authentication) {
         try {
             User user = getLoggedInUser(authentication);
+            if (user == null)  return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
             List<ChoiceColumn> choiceColumns = choiceColumnRepository.findByUser(user);
 
             if (choiceColumns.isEmpty()) {
@@ -73,12 +80,18 @@ public class ChoiceColumnController {
     @PostMapping
     public ResponseEntity<ChoiceColumn> createChoiceColumn(@RequestBody ChoiceColumn choiceColumn,
                                                            Authentication authentication) {
+        User user = getLoggedInUser(authentication);
+        if (user == null)  return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         try {
+            ColumnLayout columnLayout = choiceColumn.getColumnLayout();
             ChoiceColumn _choiceColumn = choiceColumnRepository
                     .save(new ChoiceColumn(choiceColumn.getName(),
-                            choiceColumn.getItems(),
-                            getLoggedInUser(authentication),
-                            choiceColumn.getColumnLayout()));
+                            columnLayout,
+                            user));
+            ChoiceOption choiceOption = new ChoiceOption("", _choiceColumn, user, columnLayout);
+            choiceOptionRepository.save(choiceOption);
+
             return new ResponseEntity<>(_choiceColumn, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -90,12 +103,14 @@ public class ChoiceColumnController {
                                                            @RequestBody ChoiceColumn choiceColumn,
                                                            Authentication authentication) {
         User user = getLoggedInUser(authentication);
+        if (user == null)  return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         Optional<ChoiceColumn> choiceColumnData = choiceColumnRepository.findByUserAndId(user, id);
 
         if (choiceColumnData.isPresent()) {
             ChoiceColumn _choiceColumn = choiceColumnData.get();
             _choiceColumn.setName(choiceColumn.getName());
-            _choiceColumn.setItems(choiceColumn.getItems());
+
             return new ResponseEntity<>(choiceColumnRepository.save(_choiceColumn), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -106,6 +121,8 @@ public class ChoiceColumnController {
     public ResponseEntity<HttpStatus> deleteChoiceColumn(@PathVariable("id") int id,
                                                          Authentication authentication) {
         User user = getLoggedInUser(authentication);
+        if (user == null)  return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         Optional<ChoiceColumn> choiceColumn = choiceColumnRepository.findById(id);
         try {
             if (choiceColumn.isPresent()) {
