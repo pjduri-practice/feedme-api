@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 /**
@@ -57,6 +60,22 @@ public class AuthenticationController {
 
     @Autowired
     ChoiceOptionRepository choiceOptionRepository;
+
+    public User getLoggedInUser(Authentication authentication) {
+        String username = null;
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            username = authentication.getName();
+        }
+
+        if (username != null) {
+            Optional<User> user = userRepository.findByUsernameIgnoreCase(username);
+            if (user.isPresent()) return user.get();
+        }
+
+        return null;
+    }
 
     /**
      * Handles a user sign-in request, accepting a username and password to generate a
@@ -181,5 +200,13 @@ public class AuthenticationController {
         // (to clear it out), and a message notifying of successful user sign-out.
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new MessageResponse("You've been signed out!"));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(Authentication authentication) {
+        User user = getLoggedInUser(authentication);
+        if (user == null)  return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        userRepository.delete(user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
